@@ -26,23 +26,23 @@ public class NContato extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ncontato);
-        getSupportActionBar().hide();
+        getSupportActionBar().hide(); // Oculta a barra de ação
 
-        iniciarComponentes();
+        iniciarComponentes(); // Inicializa os componentes da tela
     }
 
     private void iniciarComponentes() {
-        nomeTextCot = findViewById(R.id.nomeTextCot);
-        telefoneTextCot = findViewById(R.id.telefoneTextCot);
-        emailTextCot = findViewById(R.id.emailTextCot);
-        info = new HashMap<>();
-        mAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
+        nomeTextCot = findViewById(R.id.nomeTextCot); // Obtém a referência do campo de texto do nome do contato
+        telefoneTextCot = findViewById(R.id.telefoneTextCot); // Obtém a referência do campo de texto do telefone do contato
+        emailTextCot = findViewById(R.id.emailTextCot); // Obtém a referência do campo de texto do email do contato
+        info = new HashMap<>(); // Inicializa o mapa para armazenar as informações do contato
+        mAuth = FirebaseAuth.getInstance(); // Inicializa o Firebase Authentication
+        database = FirebaseDatabase.getInstance(); // Inicializa o Firebase Database
     }
 
     public void voltarHome(View view){
-        Intent i = new Intent(getApplicationContext(), Home.class);
-        startActivity(i);
+        Intent i = new Intent(getApplicationContext(), Home.class); // Cria uma nova intenção para a tela Home
+        startActivity(i); // Inicia a tela Home
     }
 
     public void adicionarContato(View view){
@@ -51,20 +51,19 @@ public class NContato extends AppCompatActivity {
                 emailTextCot.getText().toString().isEmpty()){
             Toast.makeText(getApplicationContext(),
                     "Preencha todos os campos",
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_SHORT).show(); // Exibe uma mensagem informando que todos os campos devem ser preenchidos
         } else{
             myRef = database.getReference("User/" + mAuth.getUid() +
-                            "/Contato/" + nomeTextCot.getText().toString() + "/");
+                    "/Contato/" + nomeTextCot.getText().toString() + "/"); // Cria uma referência para o contato no banco de dados
 
-            info.put("Email", emailTextCot.getText().toString());
-            info.put("Telefone", telefoneTextCot.getText().toString());
+            info.put("Email", emailTextCot.getText().toString()); // Adiciona o email ao mapa de informações do contato
+            info.put("Telefone", telefoneTextCot.getText().toString()); // Adiciona o telefone ao mapa de informações do contato
 
-            myRef.setValue(info);
+            myRef.setValue(info); // Salva as informações do contato no banco de dados
 
-            nomeTextCot.getText().clear();
-            emailTextCot.getText().clear();
-            telefoneTextCot.getText().clear();
+            nomeTextCot.getText().clear(); // Limpa o campo de texto do nome do contato
+            emailTextCot.getText().clear(); // Limpa o campo de texto do email do contato
+            telefoneTextCot.getText().clear(); // Limpa o campo de texto do telefone do contato
         }
     }
-
 }

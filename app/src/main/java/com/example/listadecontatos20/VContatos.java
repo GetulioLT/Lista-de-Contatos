@@ -34,43 +34,40 @@ public class VContatos extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vcontatos);
-        getSupportActionBar().hide();
+        getSupportActionBar().hide(); // Oculta a barra de ação
 
-        iniciarComponentes();
+        iniciarComponentes(); // Inicializa os componentes da tela
 
-        pegarChaves();
+        pegarChaves(); // Obtém as chaves do banco de dados
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                AdapterContatos adapter = new AdapterContatos(getApplicationContext(), nomes, emails, telefones);
-                listaContatos.setAdapter(adapter);
+                AdapterContatos adapter = new AdapterContatos(getApplicationContext(), nomes, emails, telefones); // Cria um novo AdapterContatos
+                listaContatos.setAdapter(adapter); // Define o adapter para a ListView de contatos
             }
-        }, 500);
+        }, 50); // Delay para aguardar a obtenção dos dados
     }
 
     private void pegarChaves() {
-        myRef = database.getReference("User/" + mAuth.getUid() + "/Contato/");
+        myRef = database.getReference("User/" + mAuth.getUid() + "/Contato/"); // Cria uma referência para os contatos do usuário no banco de dados
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot key :
-                        snapshot.getChildren()) {
-                    String nome = key.getKey();
+                for (DataSnapshot key : snapshot.getChildren()) {
+                    String nome = key.getKey(); // Obtém o nome do contato
+
                     Log.d("user", nome);
 
-                    nomes.add(nome);
+                    nomes.add(nome); // Adiciona o nome à lista de nomes de contatos
 
-                    for (String campo :
-                            campos) {
+                    for (String campo : campos) {
                         dadosRef = database.getReference("User/"
-                                + mAuth.getUid() + "/Contato/" + nome + "/" + campo + "/");
+                                + mAuth.getUid() + "/Contato/" + nome + "/" + campo + "/"); // Cria uma referência para os dados do campo (email ou telefone) do contato
 
-                        pegarDados(campo);
+                        pegarDados(campo); // Obtém os dados do campo (email ou telefone)
                     }
-
-
                 }
             }
 
@@ -85,11 +82,12 @@ public class VContatos extends AppCompatActivity {
         dadosRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String valor = snapshot.getValue(String.class);
+                String valor = snapshot.getValue(String.class); // Obtém o valor do campo (email ou telefone)
+
                 if (campo.equals("Email")){
-                    emails.add(valor);
+                    emails.add(valor); // Adiciona o valor à lista de emails
                 }else{
-                    telefones.add(valor);
+                    telefones.add(valor); // Adiciona o valor à lista de telefones
                 }
             }
 
@@ -101,16 +99,16 @@ public class VContatos extends AppCompatActivity {
     }
 
     public void voltarHomeContatos(View view){
-        Intent i = new Intent(getApplicationContext(), Home.class);
-        startActivity(i);
+        Intent i = new Intent(getApplicationContext(), Home.class); // Cria uma nova intenção para a tela Home
+        startActivity(i); // Inicia a tela Home
     }
 
     private void iniciarComponentes() {
-        listaContatos = findViewById(R.id.listaContatos);
-        nomes = new ArrayList<>();
-        telefones = new ArrayList<>();
-        emails = new ArrayList<>();
-        mAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
+        listaContatos = findViewById(R.id.listaContatos); // Obtém a referência da ListView de contatos
+        nomes = new ArrayList<>(); // Inicializa a lista de nomes de contatos
+        telefones = new ArrayList<>(); // Inicializa a lista de telefones
+        emails = new ArrayList<>(); // Inicializa a lista de emails
+        mAuth = FirebaseAuth.getInstance(); // Inicializa o Firebase Authentication
+        database = FirebaseDatabase.getInstance(); // Inicializa o Firebase Database
     }
 }

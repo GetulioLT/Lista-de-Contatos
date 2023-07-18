@@ -27,23 +27,23 @@ public class Home extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        getSupportActionBar().hide();
+        getSupportActionBar().hide(); // Oculta a barra de ação
 
-        iniciarComponentes();
+        iniciarComponentes(); // Inicializa os componentes da tela
 
-        titutlo();
+        tituto(); // Define o título da tela
 
     }
 
-    private void titutlo() {
-        myRef = database.getReference("User/" + mAuth.getUid() + "/Nome/");
+    private void tituto() {
+        myRef = database.getReference("User/" + mAuth.getUid() + "/Nome/"); // Cria uma referência para o nome do usuário no banco de dados
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String nome = snapshot.getValue(String.class);
+                String nome = snapshot.getValue(String.class); // Obtém o valor do nome do usuário do banco de dados
 
-                tvHome.setText(String.format("%s%s", tvHome.getText().toString(), nome));
+                tvHome.setText(String.format("%s%s", tvHome.getText().toString(), nome)); // Define o texto da TextView com o nome do usuário
             }
 
             @Override
@@ -54,24 +54,24 @@ public class Home extends AppCompatActivity {
     }
 
     private void iniciarComponentes() {
-        tvHome = findViewById(R.id.tvHome);
-        mAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
+        tvHome = findViewById(R.id.tvHome); // Obtém a referência da TextView
+        mAuth = FirebaseAuth.getInstance(); // Inicializa o Firebase Authentication
+        database = FirebaseDatabase.getInstance(); // Inicializa o Firebase Database
     }
 
     public void novoContato(View view){
-        Intent i = new Intent(getApplicationContext(), NContato.class);
-        startActivity(i);
+        Intent i = new Intent(getApplicationContext(), NContato.class); // Cria uma nova intenção para a tela de Novo Contato
+        startActivity(i); // Inicia a tela de Novo Contato
     }
 
     public  void verContatos(View view){
-        Intent i = new Intent(getApplicationContext(), VContatos.class);
-        startActivity(i);
+        Intent i = new Intent(getApplicationContext(), VContatos.class); // Cria uma nova intenção para a tela de Ver Contatos
+        startActivity(i); // Inicia a tela de Ver Contatos
     }
 
     public void deslogar(View view){
-        Intent i = new Intent(getApplicationContext(), Main.class);
-        startActivity(i);
-        FirebaseAuth.getInstance().signOut();
+        Intent i = new Intent(getApplicationContext(), Main.class); // Cria uma nova intenção para a tela Main (tela de login)
+        startActivity(i); // Inicia a tela Main
+        FirebaseAuth.getInstance().signOut(); // Realiza o logout do usuário
     }
 }

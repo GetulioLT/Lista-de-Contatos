@@ -36,49 +36,49 @@ public class Cadastro extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro);
-        getSupportActionBar().hide();
+        getSupportActionBar().hide(); // Oculta a barra de ação
 
-        iniciarComponentes();
+        iniciarComponentes(); // Chama o método para inicializar os componentes da tela
     }
 
     private void iniciarComponentes() {
-        nomeTextCad = findViewById(R.id.nomeTextCad);
-        emailTextCad = findViewById(R.id.emailTextCad);
-        senhaTextCad = findViewById(R.id.senhaTextCad);
-        senhaTextCad.setInputType(129);
-        mostrarSenhaCad = findViewById(R.id.mostrarSenhaCad);
-        info = new HashMap<>();
-        mAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
+        nomeTextCad = findViewById(R.id.nomeTextCad); // Obtém a referência do campo de nome
+        emailTextCad = findViewById(R.id.emailTextCad); // Obtém a referência do campo de email
+        senhaTextCad = findViewById(R.id.senhaTextCad); // Obtém a referência do campo de senha
+        senhaTextCad.setInputType(129); // Define o tipo de entrada do campo de senha como "texto oculto"
+        mostrarSenhaCad = findViewById(R.id.mostrarSenhaCad); // Obtém a referência da caixa de seleção "mostrar senha"
+        info = new HashMap<>(); // Cria um mapa para armazenar as informações do usuário
+        mAuth = FirebaseAuth.getInstance(); // Inicializa o Firebase Authentication
+        database = FirebaseDatabase.getInstance(); // Inicializa o Firebase Database
     }
 
-    public void voltarMain(View view){
+    public void voltarMain(View view) {
         Intent i = new Intent(getApplicationContext(), Main.class);
         startActivity(i);
     }
 
-    public void mostrarSenhaCad(View view){
+    public void mostrarSenhaCad(View view) {
         if (mostrarSenhaCad.isChecked()) {
-            senhaTextCad.setInputType(1);
-        }else{
-            senhaTextCad.setInputType(129);
+            senhaTextCad.setInputType(1); // Mostra o texto digitado no campo de senha
+        } else {
+            senhaTextCad.setInputType(129); // Oculta o texto digitado no campo de senha
         }
     }
-    
-    public void cadastrar(View view){
+
+    public void cadastrar(View view) {
         if (nomeTextCad.getText().toString().isEmpty() &&
-        emailTextCad.getText().toString().isEmpty() &&
-        senhaTextCad.getText().toString().isEmpty()){
-            Toast.makeText(getApplicationContext(), 
-                    "Preenchar todos os campos", 
+                emailTextCad.getText().toString().isEmpty() &&
+                senhaTextCad.getText().toString().isEmpty()) {
+            Toast.makeText(getApplicationContext(),
+                    "Preencha todos os campos",
                     Toast.LENGTH_LONG).show();
         } else if (nomeTextCad.getText().toString().isEmpty()) {
-            Toast.makeText(getApplicationContext(), 
-                    "Preencha o campo de nome", 
+            Toast.makeText(getApplicationContext(),
+                    "Preencha o campo de nome",
                     Toast.LENGTH_LONG).show();
         } else if (emailTextCad.getText().toString().isEmpty()) {
-            Toast.makeText(getApplicationContext(), 
-                    "Preencha o campo de email", 
+            Toast.makeText(getApplicationContext(),
+                    "Preencha o campo de email",
                     Toast.LENGTH_LONG).show();
         } else if (senhaTextCad.getText().toString().isEmpty()) {
             Toast.makeText(getApplicationContext(),
@@ -86,37 +86,39 @@ public class Cadastro extends AppCompatActivity {
                     Toast.LENGTH_LONG).show();
         } else if (senhaTextCad.getText().toString().toCharArray().length < 6) {
             Toast.makeText(getApplicationContext(),
-                    "Quantidade de caracteres da senha invalidor",
+                    "Quantidade de caracteres da senha inválida",
                     Toast.LENGTH_LONG).show();
-        }else{
+        } else {
+            // Tenta criar um novo usuário com o email e senha fornecidos
             mAuth.createUserWithEmailAndPassword(emailTextCad.getText().toString(),
-                    senhaTextCad.getText().toString())
+                            senhaTextCad.getText().toString())
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()){
-                        myRef = database.getReference("User/" + mAuth.getUid() + "/");
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                myRef = database.getReference("User/" + mAuth.getUid() + "/"); // Cria uma referência para o usuário no banco de dados
 
-                        info.put("Nome", nomeTextCad.getText().toString());
-                        info.put("Email", emailTextCad.getText().toString());
-                        info.put("Senha", senhaTextCad.getText().toString());
+                                info.put("Nome", nomeTextCad.getText().toString()); // Adiciona o nome ao mapa de informações
+                                info.put("Email", emailTextCad.getText().toString()); // Adiciona o email ao mapa de informações
+                                info.put("Senha", senhaTextCad.getText().toString()); // Adiciona a senha ao mapa de informações
 
-                        myRef.setValue(info);
+                                myRef.setValue(info); // Salva as informações do usuário no banco de dados
 
-                        Toast.makeText(getApplicationContext(),
-                                "Cadastro realizado com sucesso",
-                                Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(),
+                                        "Cadastro realizado com sucesso",
+                                        Toast.LENGTH_SHORT).show();
 
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent i = new Intent(getApplicationContext(), Main.class);
-                                startActivity(i);
+                                // Define um atraso de 2 segundos antes de redirecionar para a tela Main
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Intent i = new Intent(getApplicationContext(), Main.class);
+                                        startActivity(i);
+                                    }
+                                }, 2000);
                             }
-                        }, 2000);
-                    }
-                }
-            });
+                        }
+                    });
         }
     }
 }
