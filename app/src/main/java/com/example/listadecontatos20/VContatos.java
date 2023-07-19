@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -20,11 +21,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VContatos extends AppCompatActivity {
     ListView listaContatos;
     List<String> nomes, telefones, emails;
+    static Map<String, String> dadosContatos;
     String[] campos = {"Email", "Telefone"};
     FirebaseAuth mAuth;
     FirebaseDatabase database;
@@ -46,7 +50,26 @@ public class VContatos extends AppCompatActivity {
                 AdapterContatos adapter = new AdapterContatos(getApplicationContext(), nomes, emails, telefones); // Cria um novo AdapterContatos
                 listaContatos.setAdapter(adapter); // Define o adapter para a ListView de contatos
             }
-        }, 50); // Delay para aguardar a obtenção dos dados
+        }, 1000); // Delay para aguardar a obtenção dos dados
+
+        listaContatos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                for (int i = 0; i < nomes.size(); i++){
+                    if (i == position){
+                        Log.e("dados", nomes.get(position));
+                        Log.e("dados", emails.get(position));
+                        Log.e("dados", telefones.get(position));
+                        dadosContatos.put("Nome", nomes.get(position));
+                        dadosContatos.put("Email", emails.get(position));
+                        dadosContatos.put("Telefone", telefones.get(position));
+
+                        Intent intent = new Intent(getApplicationContext(), ApagarContatos.class);
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
     }
 
     private void pegarChaves() {
@@ -108,6 +131,7 @@ public class VContatos extends AppCompatActivity {
         nomes = new ArrayList<>(); // Inicializa a lista de nomes de contatos
         telefones = new ArrayList<>(); // Inicializa a lista de telefones
         emails = new ArrayList<>(); // Inicializa a lista de emails
+        dadosContatos = new HashMap<>(); // Inicializa o mapa de dados de contatos
         mAuth = FirebaseAuth.getInstance(); // Inicializa o Firebase Authentication
         database = FirebaseDatabase.getInstance(); // Inicializa o Firebase Database
     }
